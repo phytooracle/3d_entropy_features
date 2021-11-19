@@ -26,7 +26,7 @@ RUN cd Python-3.8.10/ && ./configure --with-ensurepip=install && make && make in
 RUN apt-get update
 RUN apt-get install -y libgdal-dev
 RUN pip3 install --upgrade pip
-RUN pip3 install -r /opt/predict/requirements.txt
+RUN pip3 install -r /opt/requirements.txt
 RUN ldconfig
 RUN apt-get install -y locales && locale-gen en_US.UTF-8
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
