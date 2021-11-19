@@ -28,7 +28,6 @@ RUN apt-get install -y wget \
                        libc6-dev \
                        liblzma-dev
 
-
 RUN wget https://www.python.org/ftp/python/3.8.10/Python-3.8.10.tgz
 RUN tar -xzf Python-3.8.10.tgz
 RUN cd Python-3.8.10/ && ./configure --with-ensurepip=install && make && make install
