@@ -19,7 +19,7 @@ RUN apt-get install -y python3.6-dev \
                        libxext6
 
 
-RUN wget https://www.python.org/ftp/python/3.8.11/Python-3.8.10.tgz
+RUN wget https://www.python.org/ftp/python/3.8.10/Python-3.8.10.tgz
 RUN tar -xzf Python-3.8.10.tgz
 RUN cd Python-3.8.10/ && ./configure --with-ensurepip=install && make && make install
 
