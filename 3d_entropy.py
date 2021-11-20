@@ -33,12 +33,12 @@ def get_args():
                         type=str,
                         default='')
 
-    parser.add_argument('-c',
-                        '--cpu',
-                        help='Number of CPUs to use for multiprocessing.',
-                        metavar='cpu',
-                        type=int,
-                        required=True)
+    # parser.add_argument('-c',
+    #                     '--cpu',
+    #                     help='Number of CPUs to use for multiprocessing.',
+    #                     metavar='cpu',
+    #                     type=int,
+    #                     required=True)
 
     parser.add_argument('-o',
                         '--outdir',
@@ -152,45 +152,52 @@ def get_min_max(pcd):
 # --------------------------------------------------
 def process_one_pointcloud(pcd_path):
 
-    plant_dict = {}
-    
-    # Open and downsample pointcloud
-    pcd = open_pcd(pcd_path)
-    point_count = len(pcd.points)
-    print(f'{os.path.basename(pcd_path)} has {point_count} points.')
-    down_pcd = downsample_pcd(pcd)
-    plant_name = os.path.splitext(os.path.basename(os.path.dirname(pcd_path)))[0]
+    df = pd.DataFrame()
 
-    max_x, max_y, max_z, min_x, min_y, min_z = get_min_max(pcd)
+    try:
+        plant_dict = {}
+        
+        # Open and downsample pointcloud
+        pcd = open_pcd(pcd_path)
+        point_count = len(pcd.points)
+        print(f'{os.path.basename(pcd_path)} has {point_count} points.')
+        down_pcd = downsample_pcd(pcd)
+        plant_name = os.path.splitext(os.path.basename(os.path.dirname(pcd_path)))[0]
 
-    # Calculate plant and bounding box volumes
-    hull_vol = calculate_convex_hull_volume(pcd)
-    obb_vol = calculate_oriented_bb_volume(pcd)
-    abb_vol = calculate_axis_aligned_bb_volume(pcd)
+        max_x, max_y, max_z, min_x, min_y, min_z = get_min_max(pcd)
 
-    # Calculate persistance diagrams and entropy features
-    pcd_array = convert_point_cloud_to_array(down_pcd)
-    features = calculate_persistance_diagram(pcd_array)
-    zero, one, two = separate_features(features)
+        # Calculate plant and bounding box volumes
+        hull_vol = calculate_convex_hull_volume(pcd)
+        obb_vol = calculate_oriented_bb_volume(pcd)
+        abb_vol = calculate_axis_aligned_bb_volume(pcd)
 
-    # Create dictionary of outputs
-    plant_dict[plant_name] = {
-        'min_x': min_x,
-        'min_y': min_y,
-        'min_z': min_z,
-        'max_x': max_x,
-        'max_y': max_y,
-        'max_z': max_z,
-        'num_points': point_count,
-        'hull_volume': hull_vol,
-        'oriented_bounding_box': obb_vol, 
-        'axis_aligned_bounding_box': abb_vol, 
-        'persistence entropies_feature_0': zero,
-        'persistence entropies_feature_1': one, 
-        'persistence entropies_feature_2': two  
-    }
+        # Calculate persistance diagrams and entropy features
+        pcd_array = convert_point_cloud_to_array(down_pcd)
+        features = calculate_persistance_diagram(pcd_array)
+        zero, one, two = separate_features(features)
 
-    df = pd.DataFrame.from_dict(plant_dict, orient='index')
+        # Create dictionary of outputs
+        plant_dict[plant_name] = {
+            'min_x': min_x,
+            'min_y': min_y,
+            'min_z': min_z,
+            'max_x': max_x,
+            'max_y': max_y,
+            'max_z': max_z,
+            'num_points': point_count,
+            'hull_volume': hull_vol,
+            'oriented_bounding_box': obb_vol, 
+            'axis_aligned_bounding_box': abb_vol, 
+            'persistence entropies_feature_0': zero,
+            'persistence entropies_feature_1': one, 
+            'persistence entropies_feature_2': two  
+        }
+
+        df = pd.DataFrame.from_dict(plant_dict, orient='index')
+
+    except:
+        pass
+
 
     return df
 
