@@ -11,4 +11,4 @@ This container extracts TDA features that describe the shape of pointclouds. A v
   * Heat
   * Persistence Image
 
-Values are extracted using the (Giotto-TDA)[https://giotto-ai.github.io/gtda-docs/0.5.1/index.html] Python package.
+Values are extracted using the [Giotto-TDA](https://giotto-ai.github.io/gtda-docs/0.5.1/index.html) Python package.
