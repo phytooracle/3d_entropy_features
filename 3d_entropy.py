@@ -145,21 +145,21 @@ def get_number_points_features(diagram):
 
 
 # --------------------------------------------------
-def get_amplitude_features(diagram):
+def get_amplitude_features(diagram, metric_val='landscape'):
     
-    am_features = Amplitude(metric='wasserstein').fit_transform(diagram)
+    am_features = Amplitude(metric=metric_val).fit_transform(diagram)
 
     return am_features
 
 
-# --------------------------------------------------
-def separate_features(features):
+# # --------------------------------------------------
+# def separate_features(features):
 
-    zero = features[0][0]
-    one = features[0][1]
-    two = features[0][2]
+#     zero = features[0][0]
+#     one = features[0][1]
+#     two = features[0][2]
 
-    return zero, one, two
+#     return zero, one, two
 
 
 # --------------------------------------------------
@@ -197,12 +197,6 @@ def process_one_pointcloud(pcd_path):
         pcd_array = convert_point_cloud_to_array(down_pcd)
         diagram = get_persistance_diagram(pcd_array)
 
-        pe_features = get_persistance_entropy_features(diagram)
-        np_features = get_number_points_features(diagram)
-        am_features = get_amplitude_features(diagram)
-
-        zero, one, two = separate_features(pe_features)
-
         # Create dictionary of outputs
         plant_dict[plant_name] = {
             'min_x': min_x,
@@ -215,16 +209,33 @@ def process_one_pointcloud(pcd_path):
             'hull_volume': hull_vol,
             'oriented_bounding_box': obb_vol, 
             'axis_aligned_bounding_box': abb_vol, 
-            'persistence_entropy_0': pe_features[0][0],
-            'persistence_entropy_1': pe_features[0][1], 
-            'persistence_entropy_2': pe_features[0][2], 
-            'number_points_0': np_features[0][0],
-            'number_points_1': np_features[0][1],
-            'number_points_2': np_features[0][2],
-            'amplitude_0': am_features[0][0],
-            'amplitude_1': am_features[0][1],
-            'amplitude_2': am_features[0][2]
-
+            'persistence_entropy_0': get_persistance_entropy_features(diagram)[0][0],
+            'persistence_entropy_1': get_persistance_entropy_features(diagram)[0][1], 
+            'persistence_entropy_2': get_persistance_entropy_features(diagram)[0][2], 
+            'number_points_0': get_number_points_features(diagram)[0][0],
+            'number_points_1': get_number_points_features(diagram)[0][1],
+            'number_points_2': get_number_points_features(diagram)[0][2],
+            'amplitude_landscape_0': get_amplitude_features(diagram)[0][0],
+            'amplitude_landscape_1': get_amplitude_features(diagram)[0][1],
+            'amplitude_landscape_2': get_amplitude_features(diagram)[0][2],
+            'amplitude_bottleneck_0': get_amplitude_features(diagram, metric_val='bottleneck')[0][0],
+            'amplitude_bottleneck_1': get_amplitude_features(diagram, metric_val='bottleneck')[0][1],
+            'amplitude_bottleneck_2': get_amplitude_features(diagram, metric_val='bottleneck')[0][2],
+            'amplitude_wasserstein_0': get_amplitude_features(diagram, metric_val='wasserstein')[0][0],
+            'amplitude_wasserstein_1': get_amplitude_features(diagram, metric_val='wasserstein')[0][1],
+            'amplitude_wasserstein_2': get_amplitude_features(diagram, metric_val='wasserstein')[0][2],
+            'amplitude_betti_0': get_amplitude_features(diagram, metric_val='betti')[0][0],
+            'amplitude_betti_1': get_amplitude_features(diagram, metric_val='betti')[0][1],
+            'amplitude_betti_2': get_amplitude_features(diagram, metric_val='betti')[0][2],
+            'amplitude_silhouette_0': get_amplitude_features(diagram, metric_val='silhouette')[0][0],
+            'amplitude_silhouette_1': get_amplitude_features(diagram, metric_val='silhouette')[0][1],
+            'amplitude_silhouette_2': get_amplitude_features(diagram, metric_val='silhouette')[0][2],
+            'amplitude_heat_0': get_amplitude_features(diagram, metric_val='heat')[0][0],
+            'amplitude_heat_1': get_amplitude_features(diagram, metric_val='heat')[0][1],
+            'amplitude_heat_2': get_amplitude_features(diagram, metric_val='heat')[0][2],
+            'amplitude_persistence_image_0': get_amplitude_features(diagram, metric_val='persistence_image')[0][0],
+            'amplitude_persistence_image_1': get_amplitude_features(diagram, metric_val='persistence_image')[0][1],
+            'amplitude_persistence_image_2': get_amplitude_features(diagram, metric_val='persistence_image')[0][2],
         }
 
         df = pd.DataFrame.from_dict(plant_dict, orient='index')
