@@ -1,5 +1,5 @@
 # 3D Topological Data Analysis (TDA)
-This container extracts TDA features using the [Giotto-TDA](https://giotto-ai.github.io/gtda-docs/0.5.1/index.html) Python package. A vector describing each dimension (x, y,z) is output:
+This container extracts TDA features using the [Giotto-TDA](https://giotto-ai.github.io/gtda-docs/0.5.1/index.html) Python package. A vector describing each dimension (x, y, z) is output:
 * Persistence entropy
 * Number of points 
 * Amplitude
