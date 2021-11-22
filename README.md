@@ -1,5 +1,5 @@
 # 3D Topological Data Analysis (TDA)
-This container extracts TDA features that describe the shape of pointclouds. A vector describing each dimension (x, y,z):
+This container extracts TDA features using the [Giotto-TDA](https://giotto-ai.github.io/gtda-docs/0.5.1/index.html) Python package. A vector describing each dimension (x, y,z) is output:
 * Persistence entropy
 * Number of points 
 * Amplitude
@@ -18,4 +18,4 @@ This container extracts TDA features that describe the shape of pointclouds. A v
 * -o, --outdir | Output directory for CSV file containing feature values
 * -f, --filename | Output filename for CSV file containing feature values
 
-Values are extracted using the [Giotto-TDA](https://giotto-ai.github.io/gtda-docs/0.5.1/index.html) Python package.
+Values are extracted 
