@@ -13,6 +13,8 @@ import numpy as np
 import pandas as pd
 from gtda.homology import VietorisRipsPersistence
 from gtda.diagrams import PersistenceEntropy
+from gtda.diagrams import NumberOfPoints
+from gtda.diagrams import Amplitude
 import multiprocessing
 import glob
 
@@ -118,16 +120,36 @@ def convert_point_cloud_to_array(pcd):
 
 
 # --------------------------------------------------
-def calculate_persistance_diagram(pcd_array):
+def get_persistance_diagram(pcd_array):
+
     # Calculate persistance diagram
-    VR = VietorisRipsPersistence(metric='euclidean', homology_dimensions=[0, 1, 2])  # Parameter explained in the text
-    diagrams = VR.fit_transform(pcd_array[None, :, :])
+    diagram = VietorisRipsPersistence(metric='euclidean', homology_dimensions=[0, 1, 2]).fit_transform(pcd_array[None, :, :])
 
-    # Calculate the entropy
-    PE = PersistenceEntropy()
-    features = PE.fit_transform(diagrams)
+    return diagram
 
-    return features
+
+# --------------------------------------------------
+def get_persistance_entropy_features(diagram):
+
+    pe_features = PersistenceEntropy().fit_transform(diagram)
+
+    return pe_features
+
+
+# --------------------------------------------------
+def get_number_points_features(diagram):
+
+    np_features = NumberOfPoints().fit_transform(diagram)
+
+    return np_features
+
+
+# --------------------------------------------------
+def get_amplitude_features(diagram):
+    
+    am_features = Amplitude(metric='wasserstein').fit_transform(diagram)
+
+    return am_features
 
 
 # --------------------------------------------------
@@ -173,8 +195,13 @@ def process_one_pointcloud(pcd_path):
 
         # Calculate persistance diagrams and entropy features
         pcd_array = convert_point_cloud_to_array(down_pcd)
-        features = calculate_persistance_diagram(pcd_array)
-        zero, one, two = separate_features(features)
+        diagram = get_persistance_diagram(pcd_array)
+
+        pe_features = get_persistance_entropy_features(diagram)
+        np_features = get_number_points_features(diagram)
+        am_features = get_amplitude_features(diagram)
+
+        zero, one, two = separate_features(pe_features)
 
         # Create dictionary of outputs
         plant_dict[plant_name] = {
@@ -188,12 +215,20 @@ def process_one_pointcloud(pcd_path):
             'hull_volume': hull_vol,
             'oriented_bounding_box': obb_vol, 
             'axis_aligned_bounding_box': abb_vol, 
-            'persistence entropies_feature_0': zero,
-            'persistence entropies_feature_1': one, 
-            'persistence entropies_feature_2': two  
+            'persistence_entropy_0': pe_features[0][0],
+            'persistence_entropy_1': pe_features[0][1], 
+            'persistence_entropy_2': pe_features[0][2], 
+            'number_points_0': np_features[0][0],
+            'number_points_1': np_features[0][1],
+            'number_points_2': np_features[0][2],
+            'amplitude_0': am_features[0][0],
+            'amplitude_1': am_features[0][1],
+            'amplitude_2': am_features[0][2]
+
         }
 
         df = pd.DataFrame.from_dict(plant_dict, orient='index')
+        df.index.name = 'plant_name'
 
     except:
         pass
@@ -214,10 +249,6 @@ def main():
     with multiprocessing.Pool(args.cpu) as p:
         df = p.map(process_one_pointcloud, args.pointclouds)
         major_df = major_df.append(df)
-
-    # for pcd in args.pointclouds:
-    #     df = process_one_pointcloud(pcd)
-    #     major_df = major_df.append(df)
 
     major_df.to_csv(os.path.join(args.outdir, ''.join([args.filename, '.csv'])))
 
