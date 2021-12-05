@@ -35,12 +35,12 @@ def get_args():
                         type=str,
                         default='')
 
-    parser.add_argument('-c',
-                        '--cpu',
-                        help='Number of CPUs to use for multiprocessing.',
-                        metavar='cpu',
-                        type=int,
-                        required=True)
+#     parser.add_argument('-c',
+#                         '--cpu',
+#                         help='Number of CPUs to use for multiprocessing.',
+#                         metavar='cpu',
+#                         type=int,
+#                         required=True)
 
     parser.add_argument('-o',
                         '--outdir',
@@ -257,7 +257,7 @@ def main():
         os.makedirs(args.outdir)
     major_df = pd.DataFrame()        
 
-    with multiprocessing.Pool(args.cpu) as p:
+    with multiprocessing.Pool(multiprocessing.cpu_count()//2) as p:
         df = p.map(process_one_pointcloud, args.pointclouds)
         major_df = major_df.append(df)
 
