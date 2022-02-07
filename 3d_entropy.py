@@ -36,12 +36,12 @@ def get_args():
                         required=True)
                         #default='')
 
-    parser.add_argument('-c',
-                        '--cpu',
-                        help='Number of CPUs to use for multiprocessing.',
-                        metavar='cpu',
-                        type=int,
-                        required=True)
+    #parser.add_argument('-c',
+    #                    '--cpu',
+    #                    help='Number of CPUs to use for multiprocessing.',
+    #                    metavar='cpu',
+    #                    type=int,
+    #                    required=True)
 
     parser.add_argument('-o',
                         '--outdir',
@@ -111,7 +111,7 @@ def visualize_pcd(pcd, extra=None):
 # --------------------------------------------------
 def calculate_convex_hull_volume(pcd):
     hull, _ = pcd.compute_convex_hull()
-    hull_ls = o3d.geometry.LineSet.create_from_triangle_mesh(hull)
+    #hull_ls = o3d.geometry.LineSet.create_from_triangle_mesh(hull)
     #hull, _ = o3d.geometry.compute_point_cloud_convex_hull(pcd)#.get_volume()
     #hull_ls = o3d.geometry.LineSet.create_from_triangle_mesh(hull)
     #print(hull_ls.get_volume())
@@ -217,11 +217,11 @@ def process_one_pointcloud(pcd_path):
         print('Min max bounds calculated.')
 
         # Calculate plant and bounding box volumes
-        hull_vol = calculate_convex_hull_volume(down_pcd)
+        hull_vol = calculate_convex_hull_volume(pcd)
         print('Hull volume calculated.')
-        obb_vol = calculate_oriented_bb_volume(down_pcd)
+        obb_vol = calculate_oriented_bb_volume(pcd)
         print('Oriented bounding box volume calculated.')
-        abb_vol = calculate_axis_aligned_bb_volume(down_pcd)
+        abb_vol = calculate_axis_aligned_bb_volume(pcd)
         print('Axis aligned bounding box volume calculated.')
 
         # Calculate persistance diagrams and entropy features
@@ -290,10 +290,12 @@ def main():
     if not os.path.isdir(args.outdir):
         os.makedirs(args.outdir)
     major_df = pd.DataFrame()        
-
-    with multiprocessing.Pool(args.cpu) as p:
-        df = p.map(process_one_pointcloud, pointcloud_list)
+    for pointcloud in pointcloud_list:
+        df = process_one_pointcloud(pointcloud)
         major_df = major_df.append(df)
+    #with multiprocessing.Pool(args.cpu) as p:
+    #    df = p.map(process_one_pointcloud, pointcloud_list)
+    #    major_df = major_df.append(df)
 
     major_df.to_csv(os.path.join(args.outdir, ''.join([args.filename, '.csv'])))
 
