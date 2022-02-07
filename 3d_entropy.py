@@ -217,11 +217,11 @@ def process_one_pointcloud(pcd_path):
         print('Min max bounds calculated.')
 
         # Calculate plant and bounding box volumes
-        hull_vol = calculate_convex_hull_volume(pcd)
+        hull_vol = calculate_convex_hull_volume(down_pcd)
         print('Hull volume calculated.')
-        obb_vol = calculate_oriented_bb_volume(pcd)
+        obb_vol = calculate_oriented_bb_volume(down_pcd)
         print('Oriented bounding box volume calculated.')
-        abb_vol = calculate_axis_aligned_bb_volume(pcd)
+        abb_vol = calculate_axis_aligned_bb_volume(down_pcd)
         print('Axis aligned bounding box volume calculated.')
 
         # Calculate persistance diagrams and entropy features
