@@ -57,6 +57,13 @@ def get_args():
                         type=str,
                         default='3d_volumes_entropy')
 
+    parser.add_argument('-v',
+                        '--voxel_size',
+                        help='Voxel size for point cloud downsampling.',
+                        metavar='voxel_size',
+                        type=float,
+                        default=0.09)
+
     return parser.parse_args()
 
 
@@ -93,7 +100,7 @@ def open_pcd(pcd_path):
 
 
 # --------------------------------------------------
-def downsample_pcd(pcd, voxel_size=0.05):
+def downsample_pcd(pcd, voxel_size):
 
     down_pcd = pcd.voxel_down_sample(voxel_size=voxel_size)
 
@@ -198,7 +205,7 @@ def get_min_max(pcd):
 
 
 # --------------------------------------------------
-def process_one_pointcloud(pcd_path):
+def process_one_pointcloud(pcd_path, voxel_size):
 
     df = pd.DataFrame()
 
@@ -209,7 +216,7 @@ def process_one_pointcloud(pcd_path):
         pcd = open_pcd(pcd_path)
         point_count = len(pcd.points)
         print(f'{os.path.basename(pcd_path)} has {point_count} points.')
-        down_pcd = downsample_pcd(pcd)
+        down_pcd = downsample_pcd(pcd, voxel_size)
         print('Point cloud downsampled.')
         plant_name = os.path.splitext(os.path.basename(os.path.dirname(pcd_path)))[0]
         print(plant_name)
@@ -291,7 +298,7 @@ def main():
         os.makedirs(args.outdir)
     major_df = pd.DataFrame()        
     for pointcloud in pointcloud_list:
-        df = process_one_pointcloud(pointcloud)
+        df = process_one_pointcloud(pointcloud, args.voxel_size)
         major_df = major_df.append(df)
     #with multiprocessing.Pool(args.cpu) as p:
     #    df = p.map(process_one_pointcloud, pointcloud_list)
