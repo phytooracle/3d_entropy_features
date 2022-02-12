@@ -91,10 +91,10 @@ def open_pcd(pcd_path):
 
     pcd = o3d.io.read_point_cloud(pcd_path)
     print(f'{pcd_path} opened.')
-    #pcd.estimate_normals()
-    #print('Normals estimated.')
-    #pcd.normalize_normals()
-    #print('Normals normalized.')
+    pcd.estimate_normals()
+    print('Normals estimated.')
+    pcd.normalize_normals()
+    print('Normals normalized.')
     
     return pcd
 
