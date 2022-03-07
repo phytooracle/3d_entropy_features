@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Author : eg
+Author : Emmanuel Gonzalez
 Date   : 2021-11-19
-Purpose: Rock the Casbah
+Purpose: 3D phenotype extraction
 """
 
 import argparse
@@ -24,24 +24,15 @@ def get_args():
     """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(
-        description='Rock the Casbah',
+        description='3D phenotype extraction',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('-p',
                         '--pointclouds',
-                        help='Input point clouds either single or list.',
-                        #nargs='+',
+                        help='Input point clouds directory.',
                         metavar='str',
                         type=str,
                         required=True)
-                        #default='')
-
-    #parser.add_argument('-c',
-    #                    '--cpu',
-    #                    help='Number of CPUs to use for multiprocessing.',
-    #                    metavar='cpu',
-    #                    type=int,
-    #                    required=True)
 
     parser.add_argument('-o',
                         '--outdir',
@@ -185,16 +176,6 @@ def get_amplitude_features(diagram, metric_val='landscape'):
     return am_features
 
 
-# # --------------------------------------------------
-# def separate_features(features):
-
-#     zero = features[0][0]
-#     one = features[0][1]
-#     two = features[0][2]
-
-#     return zero, one, two
-
-
 # --------------------------------------------------
 def get_min_max(pcd):
     
@@ -297,12 +278,10 @@ def main():
     if not os.path.isdir(args.outdir):
         os.makedirs(args.outdir)
     major_df = pd.DataFrame()        
+
     for pointcloud in pointcloud_list:
         df = process_one_pointcloud(pointcloud, args.voxel_size)
         major_df = major_df.append(df)
-    #with multiprocessing.Pool(args.cpu) as p:
-    #    df = p.map(process_one_pointcloud, pointcloud_list)
-    #    major_df = major_df.append(df)
 
     major_df.to_csv(os.path.join(args.outdir, ''.join([args.filename, '.csv'])))
 
