@@ -36,5 +36,6 @@ RUN apt-get update
 RUN pip3 install -r /opt/requirements.txt
 RUN apt-get install -y locales && locale-gen en_US.UTF-8
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
+ENV PYTHONPATH=/usr/local/lib/python3.9/site-packages:$PYTHONPATH
 
 ENTRYPOINT [ "/usr/local/bin/python3.9", "/opt/3d_entropy.py" ]
