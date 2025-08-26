@@ -109,6 +109,7 @@ def visualize_pcd(pcd, extra=None):
 # --------------------------------------------------
 def calculate_convex_hull_volume(pcd):
     hull, _ = pcd.compute_convex_hull()
+    hull.orient_triangles()
     #hull_ls = o3d.geometry.LineSet.create_from_triangle_mesh(hull)
     #hull, _ = o3d.geometry.compute_point_cloud_convex_hull(pcd)#.get_volume()
     #hull_ls = o3d.geometry.LineSet.create_from_triangle_mesh(hull)
